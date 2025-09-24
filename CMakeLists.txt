@@ -16,7 +16,10 @@ else()
 endif()
 target_compile_options(spp PUBLIC -Wall)
 
-add_subdirectory(tests)
+find_library(GTEST gtest_main)
+if (GTEST_FOUND)
+  add_subdirectory(tests)
+endif()
 
 include(GNUInstallDirs)
 install(
