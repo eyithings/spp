@@ -2,6 +2,7 @@
 #define HASH_H
 
 #include <cstdlib>
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -11,7 +12,7 @@
 /**
  * @brief A type to represent a hash
  */
-typedef uint64_t hash_type;
+typedef std::uint64_t hash_type;
 
 /**
  * @brief A struct to represent an element in the hash table
