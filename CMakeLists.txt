@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 
 project(spp VERSION 1.0)
 
@@ -16,10 +16,7 @@ else()
 endif()
 target_compile_options(spp PUBLIC -Wall)
 
-find_library(GTEST gtest_main)
-if (GTEST_FOUND)
-  add_subdirectory(tests)
-endif()
+add_subdirectory(tests)
 
 include(GNUInstallDirs)
 install(
