@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cstring>
 #include "options.hpp"
 #include "sppdebug.h"
 
@@ -9,6 +10,12 @@
  */
 static inline void judge_cmdline(char **cmd_line_text)
 {
+    // Show help if -h or --help is passed
+    if (std::strcmp(*cmd_line_text, "-h") == 0 || std::strcmp(*cmd_line_text, "--help") == 0) {
+        show_usage();
+        std::exit(EXIT_SUCCESS);
+    }
+
     /* Likely a definition */
     if (*cmd_line_text[0] == '-' )
     {
