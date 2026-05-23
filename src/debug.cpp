@@ -41,5 +41,6 @@ std::string print_line_type(line_type t)
 
 #else
 void dump_hash_table() {}
-std::string print_line_type(line_type t) { return "";}
+std::string print_line_type(line_type t) { (void)t; return ""; }
 #endif
+

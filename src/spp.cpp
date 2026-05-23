@@ -150,10 +150,11 @@ static bool simplify(reader_output* ro)
     else if (parse(ro->line))
         ret = true;
 
-    if (ret)
+    if (ret) {
         cerr_debug_print("Eval [True] " << ro->line << std::endl);
-    else
+    } else {
         cerr_debug_print("Eval [False] " << ro->line << std::endl);    
+    }
 
     return ret;
 }
