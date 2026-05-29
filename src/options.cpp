@@ -1,78 +1,76 @@
 #include "options.hpp"
 #include "spp.h"
-#include <cstring>
 #include <cstdlib>
 #include <unistd.h>
 
-#define INVALIDCMDLINE(text) do { \
-    std::cerr << "Invalid definition: " << text << std::endl << std::endl;\
-    show_usage();\
-    } while (0);
+/**
+ * @brief Handle an invalid command-line definition and exit
+ */
+[[noreturn]] static void invalid_cmdline(const std::string& text)
+{
+    std::cerr << "Invalid definition: " << text << std::endl << std::endl;
+    show_usage();
+}
 
-char** first_file = nullptr;
+bool first_file_seen = false;
 
-void show_usage(void)
+void show_usage()
 {
     std::cerr << "Usage: spp [-D<define>] [files]" << std::endl;
-    exit(EXIT_FAILURE);
+    std::exit(EXIT_FAILURE);
 }
 
 /**
  * @brief Add a string to the hash table
- * 
+ *
  * @details The string is the definition provided on the command line. If -DNAME is provided,
  *          then NAME is added to the hash table.
- * 
- * @param text: the string to add
+ *
+ * @param text the string to add
  */
-static void add_defines_to_hashtable(char *text)
+static void add_defines_to_hashtable(const std::string& text)
 {
-    std::string s(text);
-    add_string_to_hash_table(s);
+    add_string_to_hash_table(text);
 }
 
-void parse_cmdline_defines(char *text)
+void parse_cmdline_defines(const std::string& text)
 {
-    int ln = std::strlen(text);
-    if (ln <= 2)
-        INVALIDCMDLINE(text);
+    if (text.length() <= 2)
+        invalid_cmdline(text);
 
-    switch(text[1])
+    if (text[1] == 'D')
     {
-        case 'D':
+        if (text.find('=') != std::string::npos)
         {
-            if (std::strrchr(text, '='))
-            {
-                std::cerr << "Ignoring `" << text << "' with `='" << std::endl;
-                return;
-            }
-            add_defines_to_hashtable(text + 2);
-            break;
+            std::cerr << "Ignoring `" << text << "' with `='" << std::endl;
+            return;
         }
-        default:
-            INVALIDCMDLINE(text);
+        add_defines_to_hashtable(text.substr(2));
+    }
+    else
+    {
+        invalid_cmdline(text);
     }
 }
 
-void parse_cmdline_files(char **text)
+void parse_cmdline_files(const std::string& text)
 {
-    if (!first_file) // first file in the list from command line
-        first_file = text;
+    first_file_seen = true;
 
-    if (access(*text, R_OK) == -1)
+    if (access(text.c_str(), R_OK) == -1)
     {
-        switch(errno)
+        switch (errno)
         {
             case EACCES:
-                std::cerr << "Read permissions needed for file " << *text << std::endl;
+                std::cerr << "Read permissions needed for file " << text << std::endl;
                 break;
             case ENOENT:
-                std::cerr << "File " << *text << " does not exist" << std::endl;
+                std::cerr << "File " << text << " does not exist" << std::endl;
                 break;
             default:
-                std::cerr << "File " << *text << " cannot be read" << std::endl;
+                std::cerr << "File " << text << " cannot be read" << std::endl;
         }
-        exit(EXIT_FAILURE);
+        std::exit(EXIT_FAILURE);
     }
-    preprocess_file(*text);
+    preprocess_file(text);
 }

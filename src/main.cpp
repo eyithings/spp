@@ -1,44 +1,33 @@
 #include <iostream>
 #include <fstream>
-#include <cstring>
+#include <string>
 #include "options.hpp"
 #include "sppdebug.h"
 
-/**
- * @brief Function to parse definitions provided on the command line
- * @param text: a single definition i.e. -DNAME
- */
-static inline void judge_cmdline(char **cmd_line_text)
+static void judge_cmdline(const std::string& arg)
 {
-    // Show help if -h or --help is passed
-    if (std::strcmp(*cmd_line_text, "-h") == 0 || std::strcmp(*cmd_line_text, "--help") == 0) {
+    if (arg == "-h" || arg == "--help") {
         show_usage();
         std::exit(EXIT_SUCCESS);
     }
 
-    /* Likely a definition */
-    if (*cmd_line_text[0] == '-' )
+    if (arg[0] == '-')
     {
         /* Quit to respect command line order. Files should come last */
-        if (first_file)
+        if (first_file_seen)
             show_usage();
 
-        parse_cmdline_defines(*cmd_line_text);
+        parse_cmdline_defines(arg);
         return;
     }
-    parse_cmdline_files(cmd_line_text);
+    parse_cmdline_files(arg);
 }
 
-
-int main (int argc, char **argv)
+int main(int argc, char **argv)
 {
-    char **argv_local = argv + 1;   // Skip the first argument which is the program name   
-    int argc_local = argc - 1;
-
-    setvbuf(stdout, nullptr, _IONBF, 0);    // Disable buffering for stdout
-    
-    while (argc_local--)
-        judge_cmdline(argv_local++);
-    // dump_hash_table();
+    for (int i = 1; i < argc; ++i)
+    {
+        judge_cmdline(argv[i]);
+    }
     return 0;
 }

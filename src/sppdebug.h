@@ -3,7 +3,6 @@
 
 #include "spp.h"
 
-extern char global_file;
 void dump_hash_table();
 std::string print_line_type(line_type t);
 

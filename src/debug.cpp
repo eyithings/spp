@@ -4,18 +4,9 @@
 #ifdef DEBUG
 void dump_hash_table()
 {
-    for (size_t i = 0; i < global_hash_table.size(); i++)
+    for (const auto& elem : global_hash_table)
     {
-        std::cout << "----------------" << std::endl;
-        std::cout << "Index: " << i << std::endl;
-        std::cout << "----------------" << std::endl;
-        table_element *elem = global_hash_table[i];
-        while (elem)
-        {
-            std::cout << elem->text << " ";
-            elem = elem->next;
-        }
-        std::cout << std::endl << std::endl;
+        std::cout << elem << std::endl;
     }
 }
 
@@ -38,9 +29,7 @@ std::string print_line_type(line_type t)
     }
 }
 
-
 #else
 void dump_hash_table() {}
 std::string print_line_type(line_type t) { (void)t; return ""; }
 #endif
-
